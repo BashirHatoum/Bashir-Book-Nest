@@ -1,10 +1,10 @@
 <script lang="ts">
     import bookNestLogo from '$assests/app-logo.svg';
 	import { Button } from '$components';
-	import { getUserState } from '$components/state/user-state.svelte';
+	import { getUserState } from '$lib/state/user-state.svelte';
     
     let userContext=getUserState();
-    let {user}= $derived(userContext);
+    let {user, userName}= $derived(userContext);
 </script>
 <header>
     <a href="/" >
@@ -23,7 +23,7 @@
         {:else}
             <ul>
                 <li>
-                    {user.email}
+                    {userName}
                 </li>
                 <li>
                     <Button isMenu={true} onclick={()=>userContext.logout()}>LogOut</Button>
