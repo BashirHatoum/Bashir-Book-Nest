@@ -1,16 +1,16 @@
 <script lang="ts">
-	import { StarRating } from '$components';
-	import type { Book } from '$lib/state/user-state.svelte';
+	import { StarRating } from "$components";
+	import type { Book } from "$lib/state/user-state.svelte";
 	interface BookCardPorps {
 		book: Book;
 	}
 	let { book }: BookCardPorps = $props();
 	let bookStatus = $derived(
 		book.finished_reading_on
-			? 'Finished'
+			? "Finished"
 			: book.started_reading_on
-				? 'Currenty Reading'
-				: 'Not Started'
+				? "Currenty Reading"
+				: "Not Started",
 	);
 </script>
 
@@ -36,7 +36,8 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		min-width: 300px;
+		min-width: 360px;
+		width: 360px;
 		max-width: 450px;
 		height: 300px;
 		border-radius: 12px;
@@ -65,7 +66,7 @@
 		border-radius: 12px;
 	}
 	.book-info h4 {
-		font-family: 'EB Garamond', serif;
+		font-family: "EB Garamond", serif;
 	}
 	.book-info p {
 		font-size: 14px;

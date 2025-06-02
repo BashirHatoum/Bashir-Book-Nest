@@ -25,6 +25,15 @@
 		}
 		isEditMode = !isEditMode;
 	}
+
+	async function deletAccount() {
+		const confirmDelete = window.confirm(
+			"Are you sure you want to delete your account? This action cannot be undone and removes all of your data!",
+		);
+		if (confirmDelete) {
+			await userContext.deleteAccount();
+		}
+	}
 </script>
 
 <div class="settings-page">
@@ -48,7 +57,7 @@
 			<Button isSecondary={true} onclick={toggleEditModeAndSaveToDatabase}>
 				{isEditMode ? "Save changes" : "Edit"}
 			</Button>
-			<Button isDanger={true} onclick={() => console.log("delete account")}>Delete account</Button>
+			<Button isDanger={true} onclick={deletAccount}>Delete account</Button>
 		</div>
 	</div>
 	<div class="stats-container">

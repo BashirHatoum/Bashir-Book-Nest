@@ -81,7 +81,7 @@ export class UserState {
 			.slice(0, 9);
 	}
 	getFavoriteGenre() {
-		if (this.allBooks.length === 0) {
+		if (this.allBooks.filter((book) => book.genre).length === 0) {
 			return "";
 		}
 		const genreCounts: { [Key: string]: number } = {};
@@ -102,9 +102,18 @@ export class UserState {
 		const mostCommonGenre = Object.keys(genreCounts).reduce((a, b) =>
 			genreCounts[a] > genreCounts[b] ? a : b,
 		);
-		return mostCommonGenre || null;
+		return mostCommonGenre || "";
 	}
-
+	getBooksFromFavoriteGenre() {
+		const mostCommonGenre = this.getFavoriteGenre();
+		return this.allBooks
+			.filter((book) => book.genre?.includes(mostCommonGenre))
+			.toSorted((a, z) => {
+				const ratingA = a.rating || 0;
+				const ratingZ = z.rating || 0;
+				return ratingZ - ratingA;
+			});
+	}
 	getBookById(bookId: number) {
 		return this.allBooks.find((book) => book.id === bookId);
 	}
@@ -182,10 +191,53 @@ export class UserState {
 		}
 	}
 
-	async updateAccountData(email: string, userName: string) {}
+	async updateAccountData(email: string, userName: string) {
+		if (!this.session) {
+			return;
+		}
+		try {
+			const response = await fetch("/api/update-account", {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${this.session.access_token}`,
+				},
+				body: JSON.stringify({
+					email,
+					userName,
+				}),
+			});
+			if (response.ok) {
+				this.userName = userName;
+			}
+		} catch (error) {
+			console.log(`Failed to update account:`, error);
+		}
+	}
 
 	async logout() {
 		await this.supabase?.auth.signOut();
+	}
+
+	async deleteAccount() {
+		if (!this.session) {
+			return;
+		}
+		try {
+			const response = await fetch("/api/delete-account", {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${this.session.access_token}`,
+				},
+			});
+			if (response.ok) {
+				await this.logout();
+				goto("/");
+			}
+		} catch (error) {
+			console.log("Failed to delete account:", error);
+		}
 	}
 }
 const USER_STATE_KEY = Symbol("USER_STATE");
